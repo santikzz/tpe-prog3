@@ -10,6 +10,7 @@ public class SolucionGreedy {
     private HashMap<Procesador, List<Tarea>> solucion;
     private List<Procesador> procesadores;
     private int maxTiempoEjecucion;
+    private int candidatosConsiderados;
 
     public SolucionGreedy(List<Procesador> procesadores, int maxTiempoEjecucion){
 
@@ -22,6 +23,7 @@ public class SolucionGreedy {
             this.solucion.put(p, t);
         }
 
+        this.candidatosConsiderados = 0;
     }
     public void add(Procesador p, Tarea t){
         this.solucion.get(p).add(t);
@@ -43,8 +45,13 @@ public class SolucionGreedy {
                         mejor = p;
                 }
             }
+            this.candidatosConsiderados++;
         }
         return mejor;
+    }
+
+    public int getCantCandidatos(){
+        return this.candidatosConsiderados;
     }
 
     private int getTiempoAcumulado(Procesador p){
@@ -123,7 +130,8 @@ public class SolucionGreedy {
             System.out.println(data);
 
         }
-        System.out.println("\n[ Tiempo maximo: "+getTiempoMaximo()+"s ]\n");
+        System.out.println("\n[ Tiempo maximo: "+getTiempoMaximo()+"s ]");
+        System.out.println("[ Candidatos considerados: "+candidatosConsiderados+" ]\n");
     }
 
 }

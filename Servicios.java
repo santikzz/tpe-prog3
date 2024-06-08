@@ -18,6 +18,8 @@ public class Servicios {
     private int maxTiempoEjecucion;
 
     private List<Integer> otrosTiempos;                             // solo para mostrar los tiempos de otras soluciones
+        
+    private int estadosBacktrack;
 
     public Servicios(String pathProcesadores, String pathTareas) {
 
@@ -50,7 +52,7 @@ public class Servicios {
         this.mejorSolucionGreedy = new SolucionGreedy(this.procesadores, maxTiempoEjecucion);
 
         this.otrosTiempos = new ArrayList<>();
-
+        this.estadosBacktrack = 0;
     }
 
     public void readTasks(String taskPath) {
@@ -172,6 +174,7 @@ public class Servicios {
         System.out.println(this.otrosTiempos);
 
         this.mejorSolucionBacktrack.show();
+        System.out.println("[ Estados generados: "+estadosBacktrack+" ]\n");
         return this.mejorSolucionBacktrack;         // return mejor solucion encontrada
     }
 
@@ -201,6 +204,8 @@ public class Servicios {
             }
             return;
         }
+
+        this.estadosBacktrack++;
 
         Tarea t = this.tareas.get(idxTarea);                                                // toma una tarea de la lista de tareas por indice
         for(Procesador p : this.procesadores) {

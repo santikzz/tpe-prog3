@@ -147,7 +147,7 @@ public class SolucionBacktrack {
             System.out.println(data);
 
         }
-        System.out.println("\n[ Tiempo maximo: "+getTiempoMaximo()+"s ]\n");
+        System.out.println("\n[ Tiempo maximo: "+getTiempoMaximo()+"s ]");
     }
 
 
