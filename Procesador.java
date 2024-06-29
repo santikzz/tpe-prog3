@@ -23,11 +23,6 @@ public class Procesador {
         this.tiempoEjecucionAcumulado = 0;
     }
 
-    public void pushTarea(Tarea tarea){
-        this.tareasAsignadas.add(tarea);
-        this.tiempoEjecucionAcumulado += tarea.getTiempoEjecucion();
-    }
-
     public void popTarea(Tarea tarea){
         this.tareasAsignadas.remove(tarea);
     }
@@ -50,6 +45,46 @@ public class Procesador {
 
     public String getId(){
         return this.idProcesador;
+    }
+
+    public void add(Tarea t){
+        this.tareasAsignadas.add(t);
+        //this.tiempoEjecucionAcumulado += tarea.getTiempoEjecucion();
+    }
+
+    public void remove(Tarea t){
+        this.tareasAsignadas.remove(t);
+    }
+
+    public int getTiempoEjecucion(){
+        int tiempo = 0;
+        for(Tarea t : this.tareasAsignadas){
+            tiempo += t.getTiempoEjecucion();
+        }
+        return tiempo;
+    }
+
+    public boolean esValido(int maxTiempoEjecucion){
+
+        int critCount = 0;
+        int tiempoAcumulado = 0;
+
+        for(Tarea t : this.tareasAsignadas){
+
+            if(t.esCritica())
+                critCount++;
+
+            tiempoAcumulado += t.getTiempoEjecucion();
+
+            if(critCount >= 2)
+                return false;
+
+            if(!this.estaRefrigerado && tiempoAcumulado >= maxTiempoEjecucion)
+                return false;
+
+        }
+        return true;
+
     }
 
 }

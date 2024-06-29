@@ -7,9 +7,7 @@ public class Servicios {
 
     private List<Tarea> tareas;
     private List<Procesador> procesadores;
-
     private HashMap<String, Tarea> hashmapTareas;                   // para servicio1
-
     private List<Tarea> tareasCriticas;                             // para servicio2
     private List<Tarea> tareasNoCriticas;                           // para servicio2
 
@@ -18,23 +16,23 @@ public class Servicios {
     private int maxTiempoEjecucion;
 
     private List<Integer> otrosTiempos;                             // solo para mostrar los tiempos de otras soluciones
-        
     private int estadosBacktrack;
 
+    // la complejidad del constructor es O(n)
+    // O(n1) por el bucle para cargar las tareas, y O(n2) por el bucle de los procesadores
+    // osea O(n1) + O(n2), pero se simplifica en O(n)
     public Servicios(String pathProcesadores, String pathTareas) {
 
         this.procesadores = new ArrayList<>();                      // init lista cpus
         this.tareas = new ArrayList<>();                            // init lista tareas
-
         this.hashmapTareas = new HashMap<>();                       // init hasmap para servicio1
-
         this.tareasCriticas = new ArrayList<>();                    // init listas auxiliares para servicio2
         this.tareasNoCriticas = new ArrayList<>();
 
         this.readProcessors(pathProcesadores);                      // cargar procesadores
         this.readTasks(pathTareas);                                 // cargar tareas
 
-        //this.maxTiempoEjecucion = 75; // temporal;
+        //this.maxTiempoEjecucion = 80;
 
         Scanner reader = new Scanner(System.in);
         int input = 0;
@@ -47,8 +45,7 @@ public class Servicios {
         }
         this.maxTiempoEjecucion = input;
 
-
-        this.mejorSolucionBacktrack = new SolucionBacktrack(this.procesadores, maxTiempoEjecucion);
+        this.mejorSolucionBacktrack = null;//new SolucionBacktrack(this.procesadores, maxTiempoEjecucion);
         this.mejorSolucionGreedy = new SolucionGreedy(this.procesadores, maxTiempoEjecucion);
 
         this.otrosTiempos = new ArrayList<>();
@@ -132,19 +129,23 @@ public class Servicios {
         return lines;
     }
 
-    // GET TAREA BY idTarea, COMPLEJIDAD O(1)
+    // la complejidad del Servicio 1 es O(1)
+    // porque guardamos las tareas en un hashmap con su idTarea como clave
     public Tarea servicio1(String ID) {
        return hashmapTareas.get(ID);
     }
 
-    // GET TAREAS CRITICAS / NO-CRITICAS, COMPLEJIDAD O(1)
+    // la complejidad del Servicio 2 es O(1)
+    // porque dividimos las tareas criticas/no-criticas en dos listas distintas
+    // entonces solo simplemente retornamos una lista completa
     public List<Tarea> servicio2(boolean esCritica) {
         if(esCritica)
             return this.tareasCriticas;
         return this.tareasNoCriticas;
     }
 
-    // rango min/max prioridad, COMPLEJIDAD O(N)
+    // la complejidad del servicio3 es (en el peor de los casos) O(n)
+    // porque si o si tenemos que recorrer la lista de tareas para encontrar el minimo y el maximo
     public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
         List<Tarea> rangoTareas = new ArrayList<>();
         for (Tarea t : tareas){
@@ -161,21 +162,22 @@ public class Servicios {
 
     public SolucionBacktrack backtrack(){
         System.out.println("[ Solucion Backtrack ]");
-        SolucionBacktrack parcial = new SolucionBacktrack(this.procesadores, this.maxTiempoEjecucion);        // new solucion parcial vacia inicial
-        this.backtrack(parcial, 0);     // magia
 
-        if(mejorSolucionBacktrack.isEmpty()){
-            System.out.println("Backtrack: No hay solucion :(");
+        SolucionBacktrack parcial = new SolucionBacktrack(this.procesadores, this.maxTiempoEjecucion);        // new solucion parcial vacia inicial
+        this.backtrack(parcial, 0);
+
+        if(mejorSolucionBacktrack == null){
+            System.out.println("Backtrack: No hay solucion");
             return null;
         }
 
-        System.out.print("\nOtros tiempos encontrados: ");
-        Collections.sort(this.otrosTiempos);
-        System.out.println(this.otrosTiempos);
+        //System.out.print("\nOtros tiempos encontrados: ");
+        //Collections.sort(this.otrosTiempos);
+        //System.out.println(this.otrosTiempos);
 
         this.mejorSolucionBacktrack.show();
         System.out.println("[ Estados generados: "+estadosBacktrack+" ]\n");
-        return this.mejorSolucionBacktrack;         // return mejor solucion encontrada
+        return this.mejorSolucionBacktrack; // return mejor solucion encontrada
     }
 
     /*
@@ -195,10 +197,15 @@ public class Servicios {
 
     private void backtrack(SolucionBacktrack parcial, int idxTarea){
 
-        if( idxTarea+1 == this.tareas.size()){                                                      // llegamos al final de la lista de tareas (leaf)
+        if( idxTarea == this.tareas.size()){                                                      // llegamos al final de la lista de tareas (leaf)
+
             if(parcial.esValida()) {                                                                // es solucion valida? (cumple con las restricciones)
                 this.otrosTiempos.add(parcial.getTiempoMaximo());                                   // agrego el tiempo maximo de la solucion encontrada, solo para comparar tiempos
-                if (parcial.getTiempoMaximo() <= mejorSolucionBacktrack.getTiempoMaximo()) {        // la solucion encontrada es mejor que la solucion previa
+                if (mejorSolucionBacktrack == null) {
+                    mejorSolucionBacktrack = parcial.getCopy();                                     // shallow copy de la nueva solucion
+                    return;
+                }
+                if (parcial.getTiempoMaximo() < mejorSolucionBacktrack.getTiempoMaximo()) {        // la solucion encontrada es mejor que la solucion previa
                     mejorSolucionBacktrack = parcial.getCopy();                                     // shallow copy de la nueva solucion
                 }
             }

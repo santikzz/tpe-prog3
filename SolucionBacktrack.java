@@ -97,10 +97,10 @@ public class SolucionBacktrack {
 
                 tiempoAcumulado += t.getTiempoEjecucion();
 
-                if(critCount >= 2)
+                if(critCount > 2)
                     return false;
 
-                if(!p.esRefrigerado() && tiempoAcumulado >= maxTiempoEjecucion)
+                if(!p.esRefrigerado() && tiempoAcumulado > maxTiempoEjecucion)
                     return false;
 
             }
