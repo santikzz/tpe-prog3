@@ -5,19 +5,19 @@ El algoritmo de backtracking estaba generando soluciones incorrectas y estados i
 (ANTES)
 ```JAVA
 if(critCount >= 2)
-		return false;
+    return false;
 
 if(!p.esRefrigerado() && tiempoAcumulado >= maxTiempoEjecucion)
-		return false;
+    return false;
 ```
 
 (DESPUES)
 ```JAVA
 if(critCount > 2)
-		return false;
+    return false;
 
 if(!p.esRefrigerado() && tiempoAcumulado > maxTiempoEjecucion)
-		return false;
+    return false;
 ```
 
 ### Servicio 1
@@ -34,6 +34,10 @@ La complejidad del constructor de `Servicios` es **O(n)**.
 Se tienen que cargar dos estructuras diferentes (tareas y procesadores), los cuales se hacen mediante dos bucles lineales O(n), lo cual seria O(n1) + (On2), pero se simplifica en O(n)
 
 # CASOS DE TEST
+
+### Resultados esperados
+![](imgs/casos.jpg)
+
 ### Tareas1.csv (tiempo max: 200)
 ![](imgs/tareas1_t200.jpg)
 
